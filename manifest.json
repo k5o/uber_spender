@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+
+  "name": "Uber Better History",
+  "description": "Shows you how much your average, monthly, total costs are in your Uber trip history dashboard.",
+  "version": "0.1",
+  "background": {
+    "scripts": [
+        "jquery.min.js",
+        "background.js"
+    ]
+  },
+  "permissions": [
+      "tabs",
+      "http://*/",
+      "https://*/"
+  ]
+}
