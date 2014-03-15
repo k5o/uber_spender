@@ -52,7 +52,11 @@ var UberBetterHistory = {
     t += '  <div id="better_history_stats" style="display: none;">'
     t += '    For: ' + this.startDate() + ' - ' + this.endDate()
     t += '    <BR>'
-    t += '    Total: ' + this.total()
+    t += '    Total Cost: ' + this.total()
+    t += '    <BR>'
+    t += '    Total Trips: ' + this.count()
+    t += '    <BR>'
+    t += '    Avg/Trip: ' + this.avg()
     t += '  </div>'
     t += '</div>'
 
@@ -66,18 +70,19 @@ var UberBetterHistory = {
     for (var i = 0, item; item = tripRows[i++];) {
       dateCell = item.children[0].children[0]
       fareCell = item.children[4]
+      parsedFare = fareCell.innerHTML.substr(1)
 
-      if (dateCell != undefined && fareCell != undefined) {
+      if (dateCell != undefined && fareCell != undefined && parsedFare[0] != 0) { // Presence check and only parse row if it isn't a cancelled trip
         var trip = {}
 
-        if (dateCell.innerHTML[3] === " "){ dateData = dateCell.innerHTML.replace(" ", 0) }
+        if (dateCell.innerHTML[3] === " "){ dateData = dateCell.innerHTML.replace(" ", 0) } // First 9 days of a month don't use double-digit formatting
         else { dateData = dateCell.innerHTML }
 
         dateArray = dateData.split(" ")
         dateParts = dateArray[0].split("/")
         timeParts = dateArray[1].split(":")
 
-        if (dateArray[2] === "PM") { timeParts[0] = parseInt(timeParts[0]) + 12 }
+        if (dateArray[2] === "PM") { timeParts[0] = parseInt(timeParts[0]) + 12 } // Correctly store time in 24:00 format
 
         year = "20" + dateParts[2]
         month = parseInt(dateParts[0]) - 1
@@ -112,6 +117,14 @@ var UberBetterHistory = {
     }
 
     return "$" + sum.toFixed(2)
+  },
+
+  count: function() {
+    return this.fares().length
+  },
+
+  avg: function() {
+    return "$" + (parseFloat(this.total().substr(1)) / this.count()).toFixed(2)
   },
 
   startDate: function() {
