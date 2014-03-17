@@ -24,8 +24,8 @@ chrome.runtime.sendMessage(
 var UberBetterHistory = {
   init: function() {
     this.inject()
-    $('#better_history_toggle').click(this.toggleStats)
-    $('#better_history_hide_reminder').click(this.hideReminder)
+    $('#ubh_toggle').click(this.toggleStats)
+    $('#ubh_hide_reminder').click(this.hideReminder)
   },
 
   inject: function() {
@@ -35,35 +35,83 @@ var UberBetterHistory = {
 
   toggleStats: function(e) {
     e.preventDefault();
-    $('#better_history_stats').slideToggle('fast');
+    $('#ubh_stats').slideToggle('fast');
   },
 
   hideReminder: function(e) {
     e.preventDefault();
-    $('#better_history_reminder').fadeOut();
+    $('#ubh_reminder').fadeOut();
 
     // Store this in chrome storage
   },
 
   template: function() {
     var t = '';
-    t += '<div id="better_history" style="">'
-    t += '  <a href="#" id="better_history_toggle">Click here to toggle Uber Better History</a> <span id="better_history_reminder" style="font-size: 10px">(you may want to load all your Uber trips first - <a href="#" id="better_history_hide_reminder">don\'t remind me</a>)</span>'
-    t += '  <div id="better_history_stats" style="display: none;">'
-    t += '    For: ' + this.startDate() + ' - ' + this.endDate()
-    t += '    <BR>'
-    t += '    Total Cost: ' + this.total()
-    t += '    <BR>'
-    t += '    Total Trips: ' + this.count()
-    t += '    <BR>'
-    t += '    Avg/Trip: ' + this.avg()
+    t += '<style>'
+    t += '  .ubh_small { font-size: 10px }'
+    t += '  .ubh_smaller { font-size: 10px }'
+    t += '  .ubh_cell_header { font-size: 16px; margin-bottom: 10px; }'
+    t += '  .ubh_cell_padding { padding: 12px; }'
+    t += '  .ubh_center { text-align: center; }'
+    t += '  .ubh_stat { color: #222; font-size: 20px }'
+    t += '  #ubh_table { border-spacing: 16px; }'
+    t += '</style>'
+    t += '<div id="better_history">'
+    t += '  <a href="#" id="ubh_toggle">Click here to toggle Uber Better History</a> <span id="ubh_reminder" class="ubh_small">(you should load all your Uber trips first - <a href="#" id="ubh_hide_reminder">don\'t remind me</a>)</span>'
+    t += '  <div id="ubh_stats" style="display: none;">'
+    t += '    <table id="ubh_table">'
+    t += '      <tr>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">TOTALS:</div>'
+    t += '          <div class="ubh_smaller">For ' + this.startDate() + ' - ' + this.endDate() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">Trips</div>'
+    t += '          <div class="ubh_stat">' + this.count() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">Fares</div>'
+    t += '          <div class="ubh_stat">$' + this.total() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">Avg/Trip</div>'
+    t += '          <div class="ubh_stat">$' + this.totalAvg() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">Avg/Month</div>'
+    t += '          <div class="ubh_stat">$' + this.monthlyAvg() + '</div>'
+    t += '        </td>'
+    t += '      </tr>'
+    t += '      <tr>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">RECENT:</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Trips</div>'
+    t += '          <div class="ubh_stat">' + this.currentYearCount() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Fares</div>'
+    t += '          <div class="ubh_stat">$' + this.currentYearCost() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">' + this.getCurrentMonthName() + ' Total</div>'
+    t += '          <div class="ubh_stat">$' + this.currentMonthCost() + '</div>'
+    t += '        </td>'
+    t += '        <td class="ubh_center ubh_cell_padding">'
+    t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Avg/Month</div>'
+    t += '          <div class="ubh_stat">$' + this.currentYearMonthlyAvg() + '</div>'
+    t += '        </td>'
+    t += '      </tr>'
+    t += '    </table>'
+    t += '    <a href="#" id="ubh_statements_toggle">Click here to toggle ' + this.getCurrentYear() + ' monthly statements</a>'
     t += '  </div>'
     t += '</div>'
 
     return t;
   },
 
-  fares: function() {
+  trips: function() {
     tripArray = []
     tripRows = $('tr')
 
@@ -92,9 +140,15 @@ var UberBetterHistory = {
         second = timeParts[2]
 
         parsedDate = new Date(year, month, day, hour, minute, second)
+        day = parsedDate.getDate()
+        month = parseInt(parsedDate.getMonth()) + 1 // getMonth uses 0-11 not 1-12
+        year = parsedDate.getFullYear()
         parsedFare = fareCell.innerHTML.substr(1)
 
         trip.date = parsedDate
+        trip.day = day
+        trip.month = month
+        trip.year = year
         trip.fare = parsedFare
         tripArray.push(trip)
       }
@@ -116,23 +170,50 @@ var UberBetterHistory = {
       if (costs[i][0] === "$"){sum = sum + parseFloat(costs[i].substr(1));}
     }
 
-    return "$" + sum.toFixed(2)
+    return sum.toFixed(2)
   },
 
   count: function() {
-    return this.fares().length
+    return this.trips().length
   },
 
-  avg: function() {
-    return "$" + (parseFloat(this.total().substr(1)) / this.count()).toFixed(2)
+  totalAvg: function() {
+    return (parseFloat(this.total()) / this.count()).toFixed(2)
+  },
+
+  monthlyAvg: function() {
+    trips = this.trips()
+    firstTrip = trips[trips.length - 1]
+    lastTrip = trips[0]
+    monthsApart = 0
+
+    if (firstTrip.year === lastTrip.year) {
+      monthsApart = lastTrip.month - firstTrip.month
+    }
+    else {
+      yearsApart = lastTrip.year - firstTrip.year
+      monthsApart = yearsApart * 12
+
+      if (lastTrip.month > firstTrip.month) {
+        monthsApart = monthsApart + (lastTrip.month - firstTrip.month)
+      }
+      else {
+        monthsApart = monthsApart - (lastTrip.month - firstTrip.month)
+      }
+    }
+
+    if (monthsApart === 0) { monthsApart = 1 }
+
+    return (parseFloat(this.total()) / monthsApart).toFixed(2)
   },
 
   startDate: function() {
-    return this.stringifyDate(this.fares()[this.fares().length - 1])
+    trips = this.trips()
+    return this.stringifyDate(trips[trips.length - 1])
   },
 
   endDate: function() {
-    return this.stringifyDate(this.fares()[0])
+    return this.stringifyDate(this.trips()[0])
   },
 
   stringifyDate: function(obj) {
@@ -144,5 +225,81 @@ var UberBetterHistory = {
 
       return retParts[1] + " " + retParts[2] + " " + retParts[3]
     }
+  },
+
+  getCurrentYear: function() {
+    dateObj = new Date()
+    return dateObj.getFullYear();
+  },
+
+  getCurrentMonth: function() {
+    dateObj = new Date()
+    return parseInt(dateObj.getMonth()) + 1;
+  },
+
+  getCurrentMonthName: function() {
+    monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthNumber = this.getCurrentMonth() - 1
+    return monthNames[monthNumber]
+  },
+
+  currentYearTrips: function() {
+    currentYearTripsArray = []
+    allTheTrips = this.trips()
+    currentYear = this.getCurrentYear()
+
+    for(var i = 0; i < allTheTrips.length; i++){
+      trip = allTheTrips[i]
+      if (trip.year === currentYear){
+        currentYearTripsArray.push(trip)
+      }
+    }
+
+    return currentYearTripsArray
+  },
+
+  currentMonthTrips: function() {
+    tripArray = []
+    yearTrips = this.currentYearTrips();
+    currentMonth = this.getCurrentMonth()
+    currentMonthTrips = []
+
+    for(var i = 0; i < yearTrips.length; i++){
+      trip = yearTrips[i]
+
+      if (trip.month === currentMonth){ currentMonthTrips.push(trip) }
+    }
+
+    return currentMonthTrips
+  },
+
+  currentYearCost: function() {
+    allTrips = this.currentYearTrips()
+    sum = 0.00
+
+    for(var i = 0; i < allTrips.length; i++){
+      sum = sum + parseFloat(allTrips[i].fare)
+    }
+
+    return sum.toFixed(2)
+  },
+
+  currentMonthCost: function(){
+    currentMonthTrips = this.currentMonthTrips()
+    sum = 0.00
+
+    for(var i = 0; i < currentMonthTrips.length; i++){
+      sum = sum + parseFloat(currentMonthTrips[i].fare)
+    }
+
+    return sum.toFixed(2)
+  },
+
+  currentYearCount: function() {
+    return this.currentYearTrips().length;
+  },
+
+  currentYearMonthlyAvg: function() {
+    return "5.55"
   }
 }
