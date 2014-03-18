@@ -6,7 +6,6 @@
   "version": "0.1",
   "background": {
     "scripts": [
-        "jquery.min.js",
         "background.js"
     ]
   },
