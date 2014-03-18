@@ -300,6 +300,31 @@ var UberBetterHistory = {
   },
 
   currentYearMonthlyAvg: function() {
-    return "5.55"
+    moreThanOneMonth = false
+    thisMonth = this.getCurrentMonth()
+    allTrips = this.currentYearTrips()
+    map = Array.prototype.map
+    allTripsMonths = map.call(allTrips, function(trip) { return trip.month })
+    allTripsMonthsArray = allTripsMonths.filter(function(elem, pos) { return allTripsMonths.indexOf(elem) == pos; }) // equivalent of .uniq
+    sum = 0.00
+
+    if (allTripsMonthsArray.length > 1) { moreThanOneMonth = true }
+
+    if (moreThanOneMonth === true) {
+      for(var i = 0; i < allTrips.length; i++){
+        if (allTrips[i].month != thisMonth){
+          sum = sum + parseFloat(allTrips[i].fare)
+        }
+      }
+
+      return (sum.toFixed(2) / (thisMonth - 1)).toFixed(2) // Average of all months leading up to current month
+    }
+    else {
+      for(var i = 0; i < allTrips.length; i++){
+        sum = sum + parseFloat(allTrips[i].fare)
+      }
+
+      return sum
+    }
   }
 }
