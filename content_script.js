@@ -54,12 +54,14 @@ var UberBetterHistory = {
     t += '  .ubh_cell_padding { padding: 12px; }'
     t += '  .ubh_center { text-align: center; }'
     t += '  .ubh_stat { color: #222; font-size: 20px }'
-    t += '  #ubh_table { border-spacing: 16px; }'
+    t += '  .ubh_padding { padding-left: 16px }'
+    t += '  .ubh_table { border-spacing: 16px; margin-bottom: 12px; }'
+    t += '  #ubh_synopsis { margin: 0px 24px 24px 40px; padding: 24px; border: 1px solid black; border-radius: 3px; max-width: 480px; color: #000}'
     t += '</style>'
     t += '<div id="better_history">'
     t += '  <a href="#" id="ubh_toggle">Click here to toggle Uber Better History</a> <span id="ubh_reminder" class="ubh_small">(you should load all your Uber trips first - <a href="#" id="ubh_hide_reminder">don\'t remind me</a>)</span>'
     t += '  <div id="ubh_stats" style="display: none;">'
-    t += '    <table id="ubh_table">'
+    t += '    <table class="ubh_table">'
     t += '      <tr>'
     t += '        <td class="ubh_center ubh_cell_padding">'
     t += '          <div class="ubh_cell_header">TOTALS:</div>'
@@ -95,8 +97,8 @@ var UberBetterHistory = {
     t += '          <div class="ubh_stat">$' + this.currentYearCost() + '</div>'
     t += '        </td>'
     t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">' + this.getCurrentMonthName() + ' Total</div>'
-    t += '          <div class="ubh_stat">$' + this.currentMonthCost() + '</div>'
+    t += '          <div class="ubh_cell_header">' + this.getMonthName(this.getCurrentMonth()) + ' Total</div>'
+    t += '          <div class="ubh_stat">$' + this.monthCostInCurrentYear(this.getCurrentMonth()) + '</div>'
     t += '        </td>'
     t += '        <td class="ubh_center ubh_cell_padding">'
     t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Avg/Month</div>'
@@ -104,7 +106,16 @@ var UberBetterHistory = {
     t += '        </td>'
     t += '      </tr>'
     t += '    </table>'
-    t += '    <a href="#" id="ubh_statements_toggle">Click here to toggle ' + this.getCurrentYear() + ' monthly statements</a>'
+    t += '    <div id="ubh_statements" style="float:left">'
+    t += '      <div class="ubh_cell_header ubh_padding">' + this.getCurrentYear() + ' MONTHLY STATEMENT</div>'
+    t += '      <table class="ubh_table">'
+    t += '        ' + this.monthlyBreakdown()
+    t += '      </table>'
+    t += '    </div>'
+    t += '    <div id="ubh_synopsis" style="float: left">'
+    t += '      <div style="font-size: 24px;">UberBetterHistory</div>'
+    t += '        <p>You are currently on pace, with {AVG - CURR} left to spend (that\'s roughly {(AVG - CURR) / AVG/TRIP.floor} trips for you). Tweet your results!</p>'
+    t += '    </div>'
     t += '  </div>'
     t += '</div>'
 
@@ -237,10 +248,10 @@ var UberBetterHistory = {
     return parseInt(dateObj.getMonth()) + 1;
   },
 
-  getCurrentMonthName: function() {
+  getMonthName: function(monthNum) {
     monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    monthNumber = this.getCurrentMonth() - 1
-    return monthNames[monthNumber]
+    monthNum = monthNum - 1
+    return monthNames[monthNum]
   },
 
   currentYearTrips: function() {
@@ -259,7 +270,6 @@ var UberBetterHistory = {
   },
 
   currentMonthTrips: function() {
-    tripArray = []
     yearTrips = this.currentYearTrips();
     currentMonth = this.getCurrentMonth()
     currentMonthTrips = []
@@ -290,6 +300,25 @@ var UberBetterHistory = {
 
     for(var i = 0; i < currentMonthTrips.length; i++){
       sum = sum + parseFloat(currentMonthTrips[i].fare)
+    }
+
+    return sum.toFixed(2)
+  },
+
+  monthCostInCurrentYear: function(month){
+    month = parseInt(month)
+    yearTrips = this.currentYearTrips();
+    monthTrips = []
+    sum = 0.00
+
+    for(var i = 0; i < yearTrips.length; i++){
+      trip = yearTrips[i]
+
+      if (trip.month === month){ monthTrips.push(trip) }
+    }
+
+    for(var i = 0; i < monthTrips.length; i++){
+      sum = sum + parseFloat(monthTrips[i].fare)
     }
 
     return sum.toFixed(2)
@@ -326,5 +355,29 @@ var UberBetterHistory = {
 
       return sum
     }
+  },
+
+  monthlyBreakdown: function() {
+    curr = this.getCurrentMonth()
+    currYearTrips = this.currentYearTrips()
+    monthsLeadingUpToCurr = this.upToNumArray(curr)
+    sum = 0.00
+    t = ''
+
+    for(var i = monthsLeadingUpToCurr.length; i > 0; i--){
+      t += '<tr><td><span class="ubh_cell_header">' + this.getMonthName(i) + ':</span></td><td><span class="ubh_stat">$' + this.monthCostInCurrentYear(i); + '</span></td></tr>'
+    }
+
+    return t
+  },
+
+  upToNumArray: function(num) {
+    arrayOfNums = []
+
+    for(var i = 1; i < (num + 1); i++){
+      arrayOfNums.push(i)
+    }
+
+    return arrayOfNums
   }
 }
