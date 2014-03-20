@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Uber Better History",
-  "description": "Shows you how much your average, monthly, total costs are in your Uber trip history dashboard.",
+  "name": "Uber Spender",
+  "description": "Uber Spender packages your Uber trip history data in a useful way so you know just how much you're really spending on rides.",
   "version": "0.1",
   "background": {
     "scripts": [
