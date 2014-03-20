@@ -116,7 +116,7 @@ var UberBetterHistory = {
     t += '      <p>'
     t += '        ' + this.checkPace();
     t += '      </p>'
-    t += '      <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-count="none" data-via="kokev" data-url="http://heyimkko.github.io/uber_spender" data-text="Uber Spender helps track my @Uber ride expenses ($' + this.currentMonthCost() +' on rides in ' + this.getMonthName(this.getCurrentMonth()) + ' so far!)">Tweet this</a>'
+    t += '      <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-count="none" data-url="http://heyimkko.github.io/uber_spender" data-text="Uber Spender helps track my @Uber ride expenses ($' + this.currentMonthCost() +' on rides in ' + this.getMonthName(this.getCurrentMonth()) + ' so far!)">Tweet this</a>'
     t += '    </div>'
     t += '  </div>'
     t += '</div>'
