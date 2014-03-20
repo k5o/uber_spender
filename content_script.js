@@ -24,8 +24,8 @@ chrome.runtime.sendMessage(
 var UberBetterHistory = {
   init: function() {
     this.inject()
-    $('#ubh_toggle').click(this.toggleStats)
-    $('#ubh_hide_reminder').click(this.hideReminder)
+    $('#spender_toggle').click(this.toggleStats)
+    $('#spender_hide_reminder').click(this.hideReminder)
   },
 
   inject: function() {
@@ -35,87 +35,84 @@ var UberBetterHistory = {
 
   toggleStats: function(e) {
     e.preventDefault();
-    $('#ubh_stats').slideToggle('fast');
-  },
-
-  hideReminder: function(e) {
-    e.preventDefault();
-    $('#ubh_reminder').fadeOut();
-
-    // Store this in chrome storage
+    $('#spender_stats').slideToggle('fast');
   },
 
   template: function() {
     var t = '';
     t += '<style>'
-    t += '  .ubh_small { font-size: 10px }'
-    t += '  .ubh_smaller { font-size: 10px }'
-    t += '  .ubh_cell_header { font-size: 16px; margin-bottom: 10px; }'
-    t += '  .ubh_cell_padding { padding: 12px; }'
-    t += '  .ubh_center { text-align: center; }'
-    t += '  .ubh_stat { color: #222; font-size: 20px }'
-    t += '  .ubh_padding { padding-left: 16px }'
-    t += '  .ubh_table { border-spacing: 16px; margin-bottom: 12px; }'
-    t += '  #ubh_synopsis { margin: 0px 24px 24px 40px; padding: 18px; border: 1px solid black; border-radius: 3px; max-width: 480px; color: #000}'
-    t += '  #ubh_synopsis p { margin: 12px 0;}'
+    t += '  .spender_small { font-size: 10px; }'
+    t += '  .spender_smaller { font-size: 10px; }'
+    t += '  .spender_cell_header { font-size: 16px; margin-bottom: 10px; }'
+    t += '  .spender_cell_padding { padding: 12px; }'
+    t += '  .spender_center { text-align: center; }'
+    t += '  .spender_stat { color: #222; font-size: 20px }'
+    t += '  .spender_padding { padding-left: 16px; }'
+    t += '  .spender_table { border-spacing: 16px; margin-bottom: 12px; }'
+    t += '  .spender_green { color: #266A2E; font-weight: bold; }'
+    t += '  #spender_statements { float: left; }'
+    t += '  #spender_stats { display: none; }'
+    t += '  #spender_synopsis { margin: 0px 24px 24px 40px; padding: 18px; border: 1px solid black; border-radius: 3px; max-width: 480px; color: #000; float: left;}'
+    t += '  #spender_synopsis p:first-child { font-size: 24px;}'
+    t += '  #spender_synopsis p { margin: 12px 0;}'
     t += '</style>'
     t += '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
     t += '<div id="better_history">'
-    t += '  <a href="#" id="ubh_toggle">Click here to toggle Uber Spender</a> <span class="ubh_small">(load all your trips at the bottom first)</span>'
-    t += '  <div id="ubh_stats" style="display: none;">'
-    t += '    <table class="ubh_table">'
+    t += '  <a href="#" id="spender_toggle">Click here to toggle Uber Spender</a> <span class="spender_small">(load all your trips at the bottom first)</span>'
+    t += '  <div id="spender_stats">'
+    t += '    <table class="spender_table">'
     t += '      <tr>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">TOTALS:</div>'
-    t += '          <div class="ubh_smaller">For ' + this.startDate() + ' - ' + this.endDate() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">TOTALS:</div>'
+    t += '          <div class="spender_smaller">For ' + this.startDate() + ' - ' + this.endDate() + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">Trips</div>'
-    t += '          <div class="ubh_stat">' + this.count() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">Trips</div>'
+    t += '          <div class="spender_stat">' + this.count() + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">Fares</div>'
-    t += '          <div class="ubh_stat">$' + this.total() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">Fares</div>'
+    t += '          <div class="spender_stat">$' + this.total() + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">Avg/Trip</div>'
-    t += '          <div class="ubh_stat">$' + this.totalAvg() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">Avg/Trip</div>'
+    t += '          <div class="spender_stat">$' + this.totalAvg() + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">Avg/Month</div>'
-    t += '          <div class="ubh_stat">$' + this.monthlyAvg() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">Avg/Month</div>'
+    t += '          <div class="spender_stat">$' + this.monthlyAvg() + '</div>'
     t += '        </td>'
     t += '      </tr>'
     t += '      <tr>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">RECENT:</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">RECENT:</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Trips</div>'
-    t += '          <div class="ubh_stat">' + this.currentYearCount() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">' + this.getCurrentYear() + ' Trips</div>'
+    t += '          <div class="spender_stat">' + this.currentYearCount() + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Fares</div>'
-    t += '          <div class="ubh_stat">$' + this.currentYearCost() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">' + this.getCurrentYear() + ' Fares</div>'
+    t += '          <div class="spender_stat spender_green">$' + this.currentYearCost() + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">' + this.getMonthName(this.getCurrentMonth()) + ' Total</div>'
-    t += '          <div class="ubh_stat">$' + this.monthCostInCurrentYear(this.getCurrentMonth()) + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">' + this.getMonthName(this.getCurrentMonth()) + ' Total</div>'
+    t += '          <div class="spender_stat spender_green">$' + this.monthCostInCurrentYear(this.getCurrentMonth()) + '</div>'
     t += '        </td>'
-    t += '        <td class="ubh_center ubh_cell_padding">'
-    t += '          <div class="ubh_cell_header">' + this.getCurrentYear() + ' Avg/Month</div>'
-    t += '          <div class="ubh_stat">$' + this.currentYearMonthlyAvg() + '</div>'
+    t += '        <td class="spender_center spender_cell_padding">'
+    t += '          <div class="spender_cell_header">' + this.getCurrentYear() + ' Avg/Month</div>'
+    t += '          <div class="spender_stat">$' + this.currentYearMonthlyAvg() + '</div>'
     t += '        </td>'
     t += '      </tr>'
     t += '    </table>'
-    t += '    <div id="ubh_statements" style="float:left">'
-    t += '      <div class="ubh_cell_header ubh_padding">' + this.getCurrentYear() + ' MONTHLY STATEMENT</div>'
-    t += '      <table class="ubh_table">'
+    t += '    <div id="spender_statements">'
+    t += '      <div class="spender_cell_header spender_padding">' + this.getCurrentYear() + ' MONTHLY STATEMENT</div>'
+    t += '      <table class="spender_table">'
     t += '        ' + this.monthlyBreakdown()
     t += '      </table>'
     t += '    </div>'
-    t += '    <div id="ubh_synopsis" style="float: left">'
-    t += '      <p style="font-size: 24px;">Uber Spender</p>'
+    t += '    <div id="spender_synopsis">'
+    t += '      <p>Uber Spender</p>'
     t += '      <p>'
     t += '        ' + this.checkPace();
     t += '      </p>'
@@ -223,41 +220,9 @@ var UberBetterHistory = {
     return (parseFloat(this.total()) / monthsApart).toFixed(2)
   },
 
-  startDate: function() {
-    trips = this.trips()
-    return this.stringifyDate(trips[trips.length - 1])
-  },
-
-  endDate: function() {
-    return this.stringifyDate(this.trips()[0])
-  },
-
-  stringifyDate: function(obj) {
-    if (obj === undefined) { return false; }
-    else if (obj.hasOwnProperty('date') === false) { return false; }
-    else {
-      ret = '' + obj.date
-      retParts = ret.split(" ")
-
-      return retParts[1] + " " + retParts[2] + " " + retParts[3]
-    }
-  },
-
-  getCurrentYear: function() {
-    dateObj = new Date()
-    return dateObj.getFullYear();
-  },
-
-  getCurrentMonth: function() {
-    dateObj = new Date()
-    return parseInt(dateObj.getMonth()) + 1;
-  },
-
-  getMonthName: function(monthNum) {
-    monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    monthNum = monthNum - 1
-    return monthNames[monthNum]
-  },
+  ///////////////////
+  // CURRENT YEAR //
+  ///////////////////
 
   currentYearTrips: function() {
     currentYearTripsArray = []
@@ -274,6 +239,88 @@ var UberBetterHistory = {
     return currentYearTripsArray
   },
 
+  currentYearCost: function() {
+    yearTrips = this.currentYearTrips()
+    sum = 0.00
+
+    for(var i = 0; i < yearTrips.length; i++){
+      sum = sum + parseFloat(yearTrips[i].fare)
+    }
+
+    return sum.toFixed(2)
+  },
+
+
+  currentYearCount: function() {
+    return this.currentYearTrips().length;
+  },
+
+  currentYearMonthlyAvg: function() {
+    moreThanOneMonth = false
+    thisMonth = this.getCurrentMonth()
+    yearTrips = this.currentYearTrips()
+    map = Array.prototype.map
+    yearTripsMonths = map.call(yearTrips, function(trip) { return trip.month })
+    yearTripsMonthsArray = yearTripsMonths.filter(function(elem, pos) { return yearTripsMonths.indexOf(elem) == pos; }) // equivalent of .uniq
+    sum = 0.00
+
+    if (yearTripsMonthsArray.length > 1) { moreThanOneMonth = true }
+
+    if (moreThanOneMonth === true) {
+      for(var i = 0; i < yearTrips.length; i++){
+        if (yearTrips[i].month != thisMonth){
+          sum = sum + parseFloat(yearTrips[i].fare)
+        }
+      }
+
+      return (sum.toFixed(2) / (thisMonth - 1)).toFixed(2) // Average of all months leading up to current month
+    }
+    else {
+      for(var i = 0; i < yearTrips.length; i++){
+        sum = sum + parseFloat(yearTrips[i].fare)
+      }
+
+      return sum
+    }
+  },
+
+  currentYearDailyAvg: function() {
+    thisYear = this.getCurrentYear()
+    thisMonth = this.getCurrentMonth() - 1
+    lastMonth = this.getCurrentMonth() - 2
+    lastDayPrevMonth = new Date(thisYear, thisMonth, 0).getDate();
+    endLastMonth = new Date(thisYear, lastMonth, lastDayPrevMonth)
+    daysSinceStart = this.dayDiff(this.yearStart(), endLastMonth)
+    yearTrips = this.currentYearTrips()
+    sum = 0.00
+
+    for(var i = 0; i < yearTrips.length; i++){
+      if (yearTrips[i].month != this.getCurrentMonth()) {
+        sum = sum + parseFloat(yearTrips[i].fare)
+      }
+    }
+
+    return parseFloat(sum/daysSinceStart).toFixed(2)
+  },
+
+  monthlyBreakdown: function() {
+    curr = this.getCurrentMonth()
+    currYearTrips = this.currentYearTrips()
+    monthsLeadingUpToCurr = this.upToNumArray(curr)
+    sum = 0.00
+    t = ''
+
+    for(var i = monthsLeadingUpToCurr.length; i > 0; i--){
+      t += '<tr><td><span class="spender_cell_header">' + this.getMonthName(i) + ':</span></td><td><span class="spender_stat">$' + this.monthCostInCurrentYear(i); + '</span></td></tr>'
+    }
+
+    return t
+  },
+
+  ///////////////////
+  // CURRENT MONTH //
+  ///////////////////
+
   currentMonthTrips: function() {
     yearTrips = this.currentYearTrips();
     currentMonth = this.getCurrentMonth()
@@ -286,17 +333,6 @@ var UberBetterHistory = {
     }
 
     return currentMonthTrips
-  },
-
-  currentYearCost: function() {
-    allTrips = this.currentYearTrips()
-    sum = 0.00
-
-    for(var i = 0; i < allTrips.length; i++){
-      sum = sum + parseFloat(allTrips[i].fare)
-    }
-
-    return sum.toFixed(2)
   },
 
   currentMonthCost: function(){
@@ -329,51 +365,48 @@ var UberBetterHistory = {
     return sum.toFixed(2)
   },
 
-  currentYearCount: function() {
-    return this.currentYearTrips().length;
+  /////////////
+  // MODULES //
+  /////////////
+
+  startDate: function() {
+    trips = this.trips()
+    return this.stringifyDate(trips[trips.length - 1])
   },
 
-  currentYearMonthlyAvg: function() {
-    moreThanOneMonth = false
-    thisMonth = this.getCurrentMonth()
-    allTrips = this.currentYearTrips()
-    map = Array.prototype.map
-    allTripsMonths = map.call(allTrips, function(trip) { return trip.month })
-    allTripsMonthsArray = allTripsMonths.filter(function(elem, pos) { return allTripsMonths.indexOf(elem) == pos; }) // equivalent of .uniq
-    sum = 0.00
+  endDate: function() {
+    return this.stringifyDate(this.trips()[0])
+  },
 
-    if (allTripsMonthsArray.length > 1) { moreThanOneMonth = true }
+  getCurrentYear: function() {
+    dateObj = new Date()
+    return dateObj.getFullYear();
+  },
 
-    if (moreThanOneMonth === true) {
-      for(var i = 0; i < allTrips.length; i++){
-        if (allTrips[i].month != thisMonth){
-          sum = sum + parseFloat(allTrips[i].fare)
-        }
-      }
+  getCurrentMonth: function() {
+    dateObj = new Date()
+    return parseInt(dateObj.getMonth()) + 1;
+  },
 
-      return (sum.toFixed(2) / (thisMonth - 1)).toFixed(2) // Average of all months leading up to current month
-    }
+  getMonthName: function(month) {
+    monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    month = month - 1
+    return monthNames[month]
+  },
+
+  ///////////////////////
+  // MISC. COMPONENTS //
+  /////////////////////
+
+  stringifyDate: function(obj) {
+    if (obj === undefined) { return false; }
+    else if (obj.hasOwnProperty('date') === false) { return false; }
     else {
-      for(var i = 0; i < allTrips.length; i++){
-        sum = sum + parseFloat(allTrips[i].fare)
-      }
+      ret = '' + obj.date
+      retParts = ret.split(" ")
 
-      return sum
+      return retParts[1] + " " + retParts[2] + " " + retParts[3]
     }
-  },
-
-  monthlyBreakdown: function() {
-    curr = this.getCurrentMonth()
-    currYearTrips = this.currentYearTrips()
-    monthsLeadingUpToCurr = this.upToNumArray(curr)
-    sum = 0.00
-    t = ''
-
-    for(var i = monthsLeadingUpToCurr.length; i > 0; i--){
-      t += '<tr><td><span class="ubh_cell_header">' + this.getMonthName(i) + ':</span></td><td><span class="ubh_stat">$' + this.monthCostInCurrentYear(i); + '</span></td></tr>'
-    }
-
-    return t
   },
 
   yearStart: function () {
@@ -382,25 +415,6 @@ var UberBetterHistory = {
 
   dayDiff: function (first, second) {
     return parseInt((second - first)/(1000 * 60 * 60 * 24))
-  },
-
-  currentYearDailyAvg: function() {
-    thisYear = this.getCurrentYear()
-    thisMonth = this.getCurrentMonth() - 1
-    lastMonth = this.getCurrentMonth() - 2
-    lastDayPrevMonth = new Date(thisYear, thisMonth, 0).getDate();
-    endLastMonth = new Date(thisYear, lastMonth, lastDayPrevMonth)
-    daysSinceStart = this.dayDiff(this.yearStart(), endLastMonth)
-    allTrips = this.currentYearTrips()
-    sum = 0.00
-
-    for(var i = 0; i < allTrips.length; i++){
-      if (allTrips[i].month != this.getCurrentMonth()) {
-        sum = sum + parseFloat(allTrips[i].fare)
-      }
-    }
-
-    return parseFloat(sum/daysSinceStart).toFixed(2)
   },
 
   upToNumArray: function(num) {
@@ -422,10 +436,10 @@ var UberBetterHistory = {
     currentMonthDailyAvg = parseFloat(this.currentMonthCost() / monthDays).toFixed(2)
 
     if (currentMonthDailyAvg < this.currentYearDailyAvg()) {
-      return 'Congratulations! You are ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', but your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg;
+      return 'Congratulations! You are ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', and your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
     }
     else{
-      return 'Sorry, you are not ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', but your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg;
+      return 'Sorry, you are not ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', but your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
     }
   }
 }
