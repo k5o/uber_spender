@@ -25,7 +25,6 @@ var UberBetterHistory = {
   init: function() {
     this.inject()
     $('#spender_toggle').click(this.toggleStats)
-    $('#spender_hide_reminder').click(this.hideReminder)
   },
 
   inject: function() {
