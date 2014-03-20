@@ -3,15 +3,13 @@
 
   "name": "Uber Spender",
   "description": "Uber Spender makes sense of your Uber ride expense history.",
-  "version": "0.1.2",
+  "version": "0.2",
   "background": {
     "scripts": [
-        "background.js"
+      "background.js"
     ]
   },
   "permissions": [
-      "tabs",
-      "http://*/",
-      "https://*/"
+    "tabs", "https://clients.uber.com/*/*"
   ]
 }

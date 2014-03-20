@@ -113,7 +113,7 @@ var UberBetterHistory = {
     t += '    <div id="spender_synopsis">'
     t += '      <p>Uber Spender</p>'
     t += '      <p>'
-    t += '        ' + this.checkPace();
+    t += '        Monthly Pace: ' + this.checkPace();
     t += '      </p>'
     t += '      <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-count="none" data-url="http://heyimkko.github.io/uber_spender" data-text="Uber Spender helps track my @Uber ride expenses ($' + this.currentMonthCost() +' on rides in ' + this.getMonthName(this.getCurrentMonth()) + ' so far!)">Tweet this</a>'
     t += '    </div>'
@@ -279,7 +279,7 @@ var UberBetterHistory = {
         sum = sum + parseFloat(yearTrips[i].fare)
       }
 
-      return sum
+      return sum.toFixed(2)
     }
   },
 
@@ -387,6 +387,11 @@ var UberBetterHistory = {
     return parseInt(dateObj.getMonth()) + 1;
   },
 
+  getCurrentDate: function() {
+    dateObj = new Date()
+    return parseInt(dateObj.getDate());
+  },
+
   getMonthName: function(month) {
     monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     month = month - 1
@@ -426,13 +431,8 @@ var UberBetterHistory = {
     return arrayOfNums
   },
 
-  daysInMonth: function(month, year) {
-    return new Date(year, month, 0).getDate();
-  },
-
   checkPace: function() {
-    monthDays = this.daysInMonth(this.getCurrentMonth(), this.getCurrentYear())
-    currentMonthDailyAvg = parseFloat(this.currentMonthCost() / monthDays).toFixed(2)
+    currentMonthDailyAvg = parseFloat(this.currentMonthCost() / this.getCurrentDate()).toFixed(2)
 
     if (currentMonthDailyAvg < this.currentYearDailyAvg()) {
       return 'Congratulations! You are ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', and your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
