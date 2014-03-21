@@ -188,6 +188,10 @@ li {
   margin-bottom: 6px;
 }
 
+.big_header {
+  font-size: 32px;
+}
+
 @media print, screen and (max-width: 960px) {
   
   div.wrapper {
