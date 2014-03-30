@@ -14,14 +14,14 @@ chrome.runtime.sendMessage(
     if (response === true) {
       $('#load').attrchange({
         callback: function(event) {
-          UberBetterHistory.init()
+          UberSpender.init()
         }
       });
     }
   }
 );
 
-var UberBetterHistory = {
+var UberSpender = {
   init: function() {
     this.inject()
     $('#spender_toggle').click(this.toggleStats)
@@ -124,8 +124,8 @@ var UberBetterHistory = {
   },
 
   trips: function() {
-    tripArray = []
-    tripRows = $('tr')
+    var tripArray = []
+    var tripRows = $('tr')
 
     for (var i = 0, item; item = tripRows[i++];) {
       dateCell = item.children[0].children[0]
@@ -144,18 +144,18 @@ var UberBetterHistory = {
 
         if (dateArray[2] === "PM") { timeParts[0] = parseInt(timeParts[0]) + 12 } // Correctly store time in 24:00 format
 
-        year = "20" + dateParts[2]
-        month = parseInt(dateParts[0]) - 1
-        day = dateParts[1]
-        hour = timeParts[0]
-        minute = timeParts[1]
-        second = timeParts[2]
+        var year = "20" + dateParts[2]
+        var month = parseInt(dateParts[0]) - 1
+        var day = dateParts[1]
+        var hour = timeParts[0]
+        var minute = timeParts[1]
+        var second = timeParts[2]
 
-        parsedDate = new Date(year, month, day, hour, minute, second)
-        day = parsedDate.getDate()
-        month = parseInt(parsedDate.getMonth()) + 1 // getMonth uses 0-11 not 1-12
-        year = parsedDate.getFullYear()
-        parsedFare = fareCell.innerHTML.substr(1)
+        var parsedDate = new Date(year, month, day, hour, minute, second)
+        var day = parsedDate.getDate()
+        var month = parseInt(parsedDate.getMonth()) + 1 // getMonth uses 0-11 not 1-12
+        var year = parsedDate.getFullYear()
+        var parsedFare = fareCell.innerHTML.substr(1)
 
         trip.date = parsedDate
         trip.day = day
@@ -170,9 +170,9 @@ var UberBetterHistory = {
   },
 
   total: function() {
-    sum = 0
-    costs = []
-    numCells = $('.num')
+    var sum = 0
+    var costs = []
+    var numCells = $('.num')
 
     for (var i = 0, item; item = numCells[i++];) {
       costs.push(item.innerHTML)
@@ -194,16 +194,16 @@ var UberBetterHistory = {
   },
 
   monthlyAvg: function() {
-    trips = this.trips()
-    firstTrip = trips[trips.length - 1]
-    lastTrip = trips[0]
-    monthsApart = 0
+    var trips = this.trips()
+    var firstTrip = trips[trips.length - 1]
+    var lastTrip = trips[0]
+    var monthsApart = 0
 
     if (firstTrip.year === lastTrip.year) {
       monthsApart = lastTrip.month - firstTrip.month
     }
     else {
-      yearsApart = lastTrip.year - firstTrip.year
+      var yearsApart = lastTrip.year - firstTrip.year
       monthsApart = yearsApart * 12
 
       if (lastTrip.month > firstTrip.month) {
@@ -224,9 +224,9 @@ var UberBetterHistory = {
   ///////////////////
 
   currentYearTrips: function() {
-    currentYearTripsArray = []
-    allTheTrips = this.trips()
-    currentYear = this.getCurrentYear()
+    var currentYearTripsArray = []
+    var allTheTrips = this.trips()
+    var currentYear = this.getCurrentYear()
 
     for(var i = 0; i < allTheTrips.length; i++){
       trip = allTheTrips[i]
@@ -239,8 +239,8 @@ var UberBetterHistory = {
   },
 
   currentYearCost: function() {
-    yearTrips = this.currentYearTrips()
-    sum = 0.00
+    var yearTrips = this.currentYearTrips()
+    var sum = 0.00
 
     for(var i = 0; i < yearTrips.length; i++){
       sum = sum + parseFloat(yearTrips[i].fare)
@@ -255,13 +255,13 @@ var UberBetterHistory = {
   },
 
   currentYearMonthlyAvg: function() {
-    moreThanOneMonth = false
-    thisMonth = this.getCurrentMonth()
-    yearTrips = this.currentYearTrips()
-    map = Array.prototype.map
-    yearTripsMonths = map.call(yearTrips, function(trip) { return trip.month })
-    yearTripsMonthsArray = yearTripsMonths.filter(function(elem, pos) { return yearTripsMonths.indexOf(elem) == pos; }) // equivalent of .uniq
-    sum = 0.00
+    var moreThanOneMonth = false
+    var thisMonth = this.getCurrentMonth()
+    var yearTrips = this.currentYearTrips()
+    var map = Array.prototype.map
+    var yearTripsMonths = map.call(yearTrips, function(trip) { return trip.month })
+    var yearTripsMonthsArray = yearTripsMonths.filter(function(elem, pos) { return yearTripsMonths.indexOf(elem) == pos; }) // equivalent of .uniq
+    var sum = 0.00
 
     if (yearTripsMonthsArray.length > 1) { moreThanOneMonth = true }
 
@@ -284,14 +284,14 @@ var UberBetterHistory = {
   },
 
   currentYearDailyAvg: function() {
-    thisYear = this.getCurrentYear()
-    thisMonth = this.getCurrentMonth() - 1
-    lastMonth = this.getCurrentMonth() - 2
-    lastDayPrevMonth = new Date(thisYear, thisMonth, 0).getDate();
-    endLastMonth = new Date(thisYear, lastMonth, lastDayPrevMonth)
-    daysSinceStart = this.dayDiff(this.yearStart(), endLastMonth)
-    yearTrips = this.currentYearTrips()
-    sum = 0.00
+    var thisYear = this.getCurrentYear()
+    var thisMonth = this.getCurrentMonth() - 1
+    var lastMonth = this.getCurrentMonth() - 2
+    var lastDayPrevMonth = new Date(thisYear, thisMonth, 0).getDate();
+    var endLastMonth = new Date(thisYear, lastMonth, lastDayPrevMonth)
+    var daysSinceStart = this.dayDiff(this.yearStart(), endLastMonth)
+    var yearTrips = this.currentYearTrips()
+    var sum = 0.00
 
     for(var i = 0; i < yearTrips.length; i++){
       if (yearTrips[i].month != this.getCurrentMonth()) {
@@ -303,11 +303,11 @@ var UberBetterHistory = {
   },
 
   monthlyBreakdown: function() {
-    curr = this.getCurrentMonth()
-    currYearTrips = this.currentYearTrips()
-    monthsLeadingUpToCurr = this.upToNumArray(curr)
-    sum = 0.00
-    t = ''
+    var curr = this.getCurrentMonth()
+    var currYearTrips = this.currentYearTrips()
+    var monthsLeadingUpToCurr = this.upToNumArray(curr)
+    var sum = 0.00
+    var t = ''
 
     for(var i = monthsLeadingUpToCurr.length; i > 0; i--){
       t += '<tr><td><span class="spender_cell_header">' + this.getMonthName(i) + ':</span></td><td><span class="spender_stat">$' + this.monthCostInCurrentYear(i); + '</span></td></tr>'
@@ -321,12 +321,12 @@ var UberBetterHistory = {
   ///////////////////
 
   currentMonthTrips: function() {
-    yearTrips = this.currentYearTrips();
-    currentMonth = this.getCurrentMonth()
-    currentMonthTrips = []
+    var yearTrips = this.currentYearTrips();
+    var currentMonth = this.getCurrentMonth()
+    var currentMonthTrips = []
 
     for(var i = 0; i < yearTrips.length; i++){
-      trip = yearTrips[i]
+      var trip = yearTrips[i]
 
       if (trip.month === currentMonth){ currentMonthTrips.push(trip) }
     }
@@ -335,8 +335,8 @@ var UberBetterHistory = {
   },
 
   currentMonthCost: function(){
-    currentMonthTrips = this.currentMonthTrips()
-    sum = 0.00
+    var currentMonthTrips = this.currentMonthTrips()
+    var sum = 0.00
 
     for(var i = 0; i < currentMonthTrips.length; i++){
       sum = sum + parseFloat(currentMonthTrips[i].fare)
@@ -346,13 +346,13 @@ var UberBetterHistory = {
   },
 
   monthCostInCurrentYear: function(month){
-    month = parseInt(month)
-    yearTrips = this.currentYearTrips();
-    monthTrips = []
-    sum = 0.00
+    var month = parseInt(month)
+    var yearTrips = this.currentYearTrips();
+    var monthTrips = []
+    var sum = 0.00
 
     for(var i = 0; i < yearTrips.length; i++){
-      trip = yearTrips[i]
+      var trip = yearTrips[i]
 
       if (trip.month === month){ monthTrips.push(trip) }
     }
@@ -369,7 +369,7 @@ var UberBetterHistory = {
   /////////////
 
   startDate: function() {
-    trips = this.trips()
+    var trips = this.trips()
     return this.stringifyDate(trips[trips.length - 1])
   },
 
@@ -378,23 +378,23 @@ var UberBetterHistory = {
   },
 
   getCurrentYear: function() {
-    dateObj = new Date()
+    var dateObj = new Date()
     return dateObj.getFullYear();
   },
 
   getCurrentMonth: function() {
-    dateObj = new Date()
+    var dateObj = new Date()
     return parseInt(dateObj.getMonth()) + 1;
   },
 
   getCurrentDate: function() {
-    dateObj = new Date()
+    var dateObj = new Date()
     return parseInt(dateObj.getDate());
   },
 
   getMonthName: function(month) {
-    monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    month = month - 1
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var month = month - 1
     return monthNames[month]
   },
 
@@ -406,8 +406,8 @@ var UberBetterHistory = {
     if (obj === undefined) { return false; }
     else if (obj.hasOwnProperty('date') === false) { return false; }
     else {
-      ret = '' + obj.date
-      retParts = ret.split(" ")
+      var ret = '' + obj.date
+      var retParts = ret.split(" ")
 
       return retParts[1] + " " + retParts[2] + " " + retParts[3]
     }
@@ -422,7 +422,7 @@ var UberBetterHistory = {
   },
 
   upToNumArray: function(num) {
-    arrayOfNums = []
+    var arrayOfNums = []
 
     for(var i = 1; i < (num + 1); i++){
       arrayOfNums.push(i)
@@ -432,7 +432,7 @@ var UberBetterHistory = {
   },
 
   checkPace: function() {
-    currentMonthDailyAvg = parseFloat(this.currentMonthCost() / this.getCurrentDate()).toFixed(2)
+    var currentMonthDailyAvg = parseFloat(this.currentMonthCost() / this.getCurrentDate()).toFixed(2)
 
     if (currentMonthDailyAvg < this.currentYearDailyAvg()) {
       return 'Congratulations! You are ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', and your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
