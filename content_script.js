@@ -125,14 +125,14 @@ var UberSpender = {
 
   trips: function() {
     var tripArray = [],
-        $tripRows = $('tr');
+        $tripRows = $('.table_wrapper tr');
 
     for (var i = 0, item; item = $tripRows[i++];) {
       dateCell = item.children[0].children[0]
       fareCell = item.children[4]
       parsedFare = fareCell.innerHTML.substr(1)
 
-      if (dateCell && fareCell && parsedFare[0] !== 0) { // Presence check and only parse row if it isn't a cancelled trip
+      if (dateCell && fareCell && parsedFare[0] !== '0') { // Presence check and only parse row if it isn't a cancelled trip
         var trip = {}
 
         if (dateCell.innerHTML[3] === ' '){ dateData = dateCell.innerHTML.replace(' ', 0) } // First 9 days of a month don't use double-digit formatting
