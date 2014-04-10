@@ -55,7 +55,6 @@ var UberSpender = {
     t += '  #spender_synopsis p:first-child { font-size: 24px;}'
     t += '  #spender_synopsis p { margin: 12px 0;}'
     t += '</style>'
-    t += '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
     t += '<div id="better_history">'
     t += '  <a href="#" id="spender_toggle">Click here to toggle Uber Spender</a> <span class="spender_small">(load all your trips at the bottom first)</span>'
     t += '  <div id="spender_stats">'
@@ -115,7 +114,6 @@ var UberSpender = {
     t += '      <p>'
     t += '        Monthly Pace: ' + this.checkPace();
     t += '      </p>'
-    t += '      <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-count="none" data-url="http://heyimkko.github.io/uber_spender" data-text="Uber Spender helps track my @Uber ride expenses ($' + this.currentMonthCost() +' on rides in ' + this.getMonthName(this.getCurrentMonth()) + ' so far!)">Tweet this</a>'
     t += '    </div>'
     t += '  </div>'
     t += '</div>'
@@ -435,8 +433,14 @@ var UberSpender = {
   checkPace: function() {
     var currentMonthDailyAvg = parseFloat(this.currentMonthCost() / this.getCurrentDate()).toFixed(2)
 
-    if (currentMonthDailyAvg < this.currentYearDailyAvg()) {
+    if (this.currentYearCost() === 0.00) {
+      return 'Looks like you haven\'t paid anything to Uber this year! If you do, you can find monthly pace-tracking stats in this box.'
+    }
+    else if (currentMonthDailyAvg < this.currentYearDailyAvg()) {
       return 'Congratulations! You are ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', and your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
+    }
+    else if (currentMonthDailyAvg === this.currentYearDailyAvg()) {
+      return 'You\'re currently on pace to match your monthly average! Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', and your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
     }
     else{
       return 'Sorry, you are not ahead of pace. Your daily average leading up to this month is $' + this.currentYearDailyAvg() + ', but your daily average in ' + this.getMonthName(this.getCurrentMonth()) + ' is $' + currentMonthDailyAvg + '.';
