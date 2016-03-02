@@ -1,7 +1,7 @@
 Uber Spender
 ===================
 
-http://heyimkko.github.io/uber_spender/
+http://k5o.github.io/uber_spender/
 
 Uber's trip history dashboard suspiciously lacks a lot of convenient information, leaving you to wonder how much did I spend on rides this year or how much do I spend per month? Uber Spender is a Chrome Extension designed to help answer those questions.
 
